@@ -81,8 +81,8 @@ rbtree_dump(struct rbtree *tree)
 
         for (; ;) {
                 if (node != sentinel) {
-                        /* On sub_index is rbtree left index,
-                         * the node goes deep down, otherwise goes backtracking */
+                        /* Fetch the pop-up backlogged node's sub-id.
+                         * If not backlogged, fetch the first sub-id. */
                         int sub_index = p_nbl != NULL ? p_nbl->next_sub_idx : RBTREE_LEFT_INDEX;
 
                         /* backlog should be reset since node has gone deep down */
@@ -99,7 +99,7 @@ rbtree_dump(struct rbtree *tree)
                         nbl_push(&nbl, &top, &buttom);
                         level++;
 
-                        /* Draw lines each loop when the node goes deep */
+                        /* Draw lines as long as sub_idx is the first one */
                         if (sub_index == RBTREE_LEFT_INDEX) {
                                 int i;
                                 for (i = 1; i < level; i++) {
@@ -116,7 +116,7 @@ rbtree_dump(struct rbtree *tree)
                                 node_dump(node);
                         }
 
-                        /* Move deep */
+                        /* Move down according to sub_idx */
                         node = sub_index == RBTREE_LEFT_INDEX ? node->left : node->right;
                 } else {
                         p_nbl = nbl_pop(&top, &buttom);
@@ -142,8 +142,8 @@ rbtree_dump_for_watch(struct rbtree *tree)
 
         for (; ;) {
                 if (node != sentinel) {
-                        /* On sub_index is rbtree left index,
-                         * the node goes deep down, otherwise goes backtracking */
+                        /* Fetch the pop-up backlogged node's sub-id.
+                         * If not backlogged, fetch the first sub-id. */
                         int sub_index = p_nbl != NULL ? p_nbl->next_sub_idx : RBTREE_RIGHT_INDEX;
 
                         /* backlog should be reset since node has gone deep down */
@@ -160,7 +160,7 @@ rbtree_dump_for_watch(struct rbtree *tree)
                         nbl_push(&nbl, &top, &buttom);
                         level++;
 
-                        /* Draw lines each loop when the node goes deep */
+                        /* Draw lines as long as sub_idx is the first one */
                         if (sub_index == RBTREE_RIGHT_INDEX) {
                                 int i;
                                 for (i = 1; i < level; i++) {
@@ -177,7 +177,7 @@ rbtree_dump_for_watch(struct rbtree *tree)
                                 node_dump(node);
                         }
 
-                        /* Move deep */
+                        /* Move down according to sub_idx */
                         node = sub_index == RBTREE_LEFT_INDEX ? node->left : node->right;
                 } else {
                         p_nbl = nbl_pop(&top, &buttom);
