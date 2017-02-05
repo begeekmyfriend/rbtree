@@ -52,10 +52,20 @@ is_leaf(struct rbnode *node, struct rbnode *sentinel)
 static void
 node_dump(struct rbnode *node)
 {
-        if (rbtree_is_red(node)) {
-                printf("R:0x%08x\n", node->key);
-        } else {
-                printf("B:0x%08x\n", node->key);
+        if (node != NULL) {
+                struct rbnode *parent = node->parent;
+                if (parent != NULL) {
+                        if (node == parent->left) {
+                                putchar('L');
+                        } else if (node == parent->right) {
+                                putchar('R');
+                        }
+                }
+                if (rbtree_is_red(node)) {
+                        printf("R:0x%08x\n", node->key);
+                } else {
+                        printf("B:0x%08x\n", node->key);
+                }
         }
 }
 
@@ -151,7 +161,7 @@ rbtree_dump_for_watch(struct rbtree *tree)
                         level++;
 
                         /* Draw lines each loop when the node goes deep */
-                        if (sub_index == 1) {
+                        if (sub_index == RBTREE_RIGHT_INDEX) {
                                 int i;
                                 for (i = 1; i < level; i++) {
                                         if (i == level - 1) {
