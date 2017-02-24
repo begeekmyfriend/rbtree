@@ -24,23 +24,23 @@ struct node_backlog {
 };
 
 static inline void
-nbl_push(struct node_backlog *nbl, struct node_backlog **top, struct node_backlog **buttom)
+nbl_push(struct node_backlog *nbl, struct node_backlog **top, struct node_backlog **bottom)
 {
-        if (*top - *buttom < RBTREE_MAX_LEVEL) {
+        if (*top - *bottom < RBTREE_MAX_LEVEL) {
                 (*(*top)++) = *nbl;
         }
 }
 
 static inline struct node_backlog *
-nbl_pop(struct node_backlog **top, struct node_backlog **buttom)
+nbl_pop(struct node_backlog **top, struct node_backlog **bottom)
 {
-        return *top > *buttom ? --*top : NULL;
+        return *top > *bottom ? --*top : NULL;
 }
 
 static inline int
-nbl_is_empty(struct node_backlog *top, struct node_backlog *buttom)
+nbl_is_empty(struct node_backlog *top, struct node_backlog *bottom)
 {
-        return top == buttom;
+        return top == bottom;
 }
 
 static inline int
@@ -75,9 +75,9 @@ rbtree_dump(struct rbtree *tree)
         int level = 0;
         struct rbnode *node = tree->root, *sentinel = tree->sentinel;
         struct node_backlog nbl, *p_nbl = NULL;
-        struct node_backlog *top, *buttom, nbl_stack[RBTREE_MAX_LEVEL];
+        struct node_backlog *top, *bottom, nbl_stack[RBTREE_MAX_LEVEL];
 
-        top = buttom = nbl_stack;
+        top = bottom = nbl_stack;
 
         for (; ;) {
                 if (node != sentinel) {
@@ -96,7 +96,7 @@ rbtree_dump(struct rbtree *tree)
                                 nbl.node = node;
                                 nbl.next_sub_idx = RBTREE_RIGHT_INDEX;
                         }
-                        nbl_push(&nbl, &top, &buttom);
+                        nbl_push(&nbl, &top, &bottom);
                         level++;
 
                         /* Draw lines as long as sub_idx is the first one */
@@ -119,7 +119,7 @@ rbtree_dump(struct rbtree *tree)
                         /* Move down according to sub_idx */
                         node = sub_index == RBTREE_LEFT_INDEX ? node->left : node->right;
                 } else {
-                        p_nbl = nbl_pop(&top, &buttom);
+                        p_nbl = nbl_pop(&top, &bottom);
                         if (p_nbl == NULL) {
                                 /* End of traversal */
                                 break;
@@ -136,9 +136,9 @@ rbtree_dump_for_watch(struct rbtree *tree)
         int level = 0;
         struct rbnode *node = tree->root, *sentinel = tree->sentinel;
         struct node_backlog nbl, *p_nbl = NULL;
-        struct node_backlog *top, *buttom, nbl_stack[RBTREE_MAX_LEVEL];
+        struct node_backlog *top, *bottom, nbl_stack[RBTREE_MAX_LEVEL];
 
-        top = buttom = nbl_stack;
+        top = bottom = nbl_stack;
 
         for (; ;) {
                 if (node != sentinel) {
@@ -157,7 +157,7 @@ rbtree_dump_for_watch(struct rbtree *tree)
                                 nbl.node = node;
                                 nbl.next_sub_idx = RBTREE_LEFT_INDEX;
                         }
-                        nbl_push(&nbl, &top, &buttom);
+                        nbl_push(&nbl, &top, &bottom);
                         level++;
 
                         /* Draw lines as long as sub_idx is the first one */
@@ -180,7 +180,7 @@ rbtree_dump_for_watch(struct rbtree *tree)
                         /* Move down according to sub_idx */
                         node = sub_index == RBTREE_LEFT_INDEX ? node->left : node->right;
                 } else {
-                        p_nbl = nbl_pop(&top, &buttom);
+                        p_nbl = nbl_pop(&top, &bottom);
                         if (p_nbl == NULL) {
                                 /* End of traversal */
                                 break;
